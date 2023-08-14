@@ -1,13 +1,13 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div>
-      <SvgIcon color='skyblue' name='home' width='100px' height='100px' prefix='#icon-'></SvgIcon>
-      <Pagination></Pagination>
-  </div>
+    <div>
+        <h1>
+            测试代码
+        </h1>
+    </div>
 </template>
 
-<style scoped>
+<style scoped lang='scss'>
 
 </style>
