@@ -2,12 +2,8 @@
 
 <template>
     <div>
-        <h1>
-            测试代码
-        </h1>
+        <h1>测试代码</h1>
     </div>
 </template>
 
-<style scoped lang='scss'>
-
-</style>
+<style scoped lang="scss"></style>
