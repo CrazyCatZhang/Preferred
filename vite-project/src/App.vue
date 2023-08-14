@@ -3,9 +3,8 @@
 
 <template>
   <div>
-    <svg>
-        <use xlink:href='#icon-vue'></use>
-    </svg>
+      <SvgIcon color='skyblue' name='home' width='100px' height='100px' prefix='#icon-'></SvgIcon>
+      <Pagination></Pagination>
   </div>
 </template>
 
