@@ -11,8 +11,8 @@ enum API {
 }
 
 const login = (data: loginForm) =>
-    request.post<loginResponseData, any>(API.USER_LOGIN_URL, data)
+    request.post<any, loginResponseData>(API.USER_LOGIN_URL, data)
 
-const getUserInfo = () => request.get<userResponseData, any>(API.USERINFO_URL)
+const getUserInfo = () => request.get<any, userResponseData>(API.USERINFO_URL)
 
 export { login, getUserInfo }
