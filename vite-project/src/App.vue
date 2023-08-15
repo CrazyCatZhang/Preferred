@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import request from '@/utils/request.ts'
 import {onMounted} from 'vue'
+import {login} from '@/api/user'
 onMounted(()=>{
-    request({
-        url: '/user/login',
-        method: 'POST',
-        data: {
-            username: 'admin',
-            password: '111111'
-        }
-    }).then((res)=>{
-        console.log(res)
-    })
+   login({
+       username: 'admin',
+       password: '1111111'
+   }).then((res)=>{
+       console.log(res)
+   })
 })
 </script>
 
