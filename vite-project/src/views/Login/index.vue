@@ -14,7 +14,9 @@
                                   v-model='loginForm.password'></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button class='login_btn' type='primary' size='default'>Login</el-button>
+                        <el-button :loading='isLoading' class='login_btn' type='primary' size='default' @click='login'>
+                            Login
+                        </el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -24,12 +26,38 @@
 
 <script setup lang='ts'>
 import { User, Lock } from '@element-plus/icons-vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import useUserStore from '@/store/modules/user.ts'
+import { ElNotification } from 'element-plus'
+import { useRouter } from 'vue-router'
+
+const useStore = useUserStore()
+const $router = useRouter()
 
 const loginForm = reactive({
-    username: '',
-    password: '',
+    username: 'admin',
+    password: '111111',
 })
+const isLoading = ref(false)
+
+const login = async () => {
+    isLoading.value = true
+    try {
+        await useStore.userLogin({ ...loginForm })
+        isLoading.value = false
+        ElNotification({
+            type: 'success',
+            message: '登录成功',
+        })
+        await $router.push('/')
+    } catch (message) {
+        isLoading.value = false
+        ElNotification({
+            type: 'error',
+            message,
+        })
+    }
+}
 </script>
 
 <style scoped lang='scss'>
