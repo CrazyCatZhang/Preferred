@@ -30,6 +30,7 @@ import { reactive, ref } from 'vue'
 import useUserStore from '@/store/modules/user.ts'
 import { ElNotification } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { getTime } from '@/utils/time.ts'
 
 const useStore = useUserStore()
 const $router = useRouter()
@@ -47,14 +48,15 @@ const login = async () => {
         isLoading.value = false
         ElNotification({
             type: 'success',
-            message: '登录成功',
+            message: '欢迎回来',
+            title: `Hello ${getTime()}好`
         })
         await $router.push('/')
-    } catch (message) {
+    } catch (err) {
         isLoading.value = false
         ElNotification({
             type: 'error',
-            message,
+            message: err.split(':')[1],
         })
     }
 }
