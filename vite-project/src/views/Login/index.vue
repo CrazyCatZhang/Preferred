@@ -3,18 +3,19 @@
         <el-row>
             <el-col :span='12' :xs='0'></el-col>
             <el-col :span='12' :xs='24'>
-                <el-form class='login_form'>
+                <el-form class='login_form' :model='loginForm' :rules='rules' ref='ruleFormRef'>
                     <h1>Hello</h1>
                     <h2>欢迎来到优选</h2>
-                    <el-form-item>
+                    <el-form-item prop='username'>
                         <el-input :prefix-icon='User' v-model='loginForm.username'></el-input>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop='password'>
                         <el-input type='password' :prefix-icon='Lock' :show-password='true'
                                   v-model='loginForm.password'></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button :loading='isLoading' class='login_btn' type='primary' size='default' @click='login'>
+                        <el-button :loading='isLoading' class='login_btn' type='primary' size='default'
+                                   @click='login(ruleFormRef)'>
                             Login
                         </el-button>
                     </el-form-item>
@@ -31,34 +32,58 @@ import useUserStore from '@/store/modules/user.ts'
 import { ElNotification } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { getTime } from '@/utils/time.ts'
+import type { FormInstance, FormRules } from 'element-plus'
+
 
 const useStore = useUserStore()
 const $router = useRouter()
+const ruleFormRef = ref<FormInstance>()
+const isLoading = ref(false)
 
-const loginForm = reactive({
+interface RuleForm {
+    username: string
+    password: string
+}
+
+const loginForm = reactive<RuleForm>({
     username: 'admin',
     password: '111111',
 })
-const isLoading = ref(false)
 
-const login = async () => {
+const rules = reactive<FormRules<RuleForm>>({
+    username: [
+        { required: true, min: 5, max: 10, message: '账号长度应该为5-10位', trigger: 'change' },
+    ],
+    password: [
+        { required: true, min: 6, max: 15, message: '密码长度应该为6-15位', trigger: 'change' },
+    ],
+})
+
+const login = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return
     isLoading.value = true
-    try {
-        await useStore.userLogin({ ...loginForm })
-        isLoading.value = false
-        ElNotification({
-            type: 'success',
-            message: '欢迎回来',
-            title: `Hello ${getTime()}好`
-        })
-        await $router.push('/')
-    } catch (err) {
-        isLoading.value = false
-        ElNotification({
-            type: 'error',
-            message: err.split(':')[1],
-        })
-    }
+    await formEl.validate(async (valid, fields) => {
+        if (valid) {
+            try {
+                await useStore.userLogin({ ...loginForm })
+                isLoading.value = false
+                ElNotification({
+                    type: 'success',
+                    message: '欢迎回来',
+                    title: `Hello ${getTime()}好`,
+                })
+                await $router.push('/')
+            } catch (err) {
+                isLoading.value = false
+                ElNotification({
+                    type: 'error',
+                    message: err.split(':')[1],
+                })
+            }
+        } else {
+            isLoading.value = false
+        }
+    })
 }
 </script>
 
