@@ -6,7 +6,8 @@ interface loginForm {
 interface loginResponseData {
     code: number
     data: {
-        token: string
+        token?: string,
+        message?: string
     }
 }
 
