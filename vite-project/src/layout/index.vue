@@ -1,11 +1,25 @@
 <script setup lang="ts">
-import Logo from '@/layout/logo/index.vue'
+import Logo from '@/layout/Logo/index.vue'
+import Menu from '@/layout/Menu/index.vue'
+import useUserStore from '@/store/modules/user.ts'
+
+const userStore = useUserStore()
 </script>
 
 <template>
     <div class="layout_container">
         <div class="layout_slider">
             <Logo></Logo>
+            <el-scrollbar class="scrollbar">
+                <el-menu
+                    background-color="#001529"
+                    text-color="white"
+                    active-text-color="yellowgreen"
+                >
+                    <!--根据路由动态生成菜单-->
+                    <Menu :menuList="userStore.menuRoutes"></Menu>
+                </el-menu>
+            </el-scrollbar>
         </div>
         <div class="layout_tabbar"></div>
         <div class="layout_main"></div>

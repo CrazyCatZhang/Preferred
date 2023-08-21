@@ -3,6 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { viteMockServe } from 'vite-plugin-mock'
+import DefineOptions from 'unplugin-vue-define-options/dist/vite'
+import vueSetupExtend from 'vite-plugin-vue-setup-extend'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -18,6 +20,8 @@ export default defineConfig(({ command }) => {
             viteMockServe({
                 localEnabled: command === 'serve',
             }),
+            DefineOptions(),
+            vueSetupExtend(),
         ],
         resolve: {
             alias: {
