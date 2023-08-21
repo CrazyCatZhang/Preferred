@@ -1,21 +1,38 @@
 <template>
-    <div class='login_container'>
+    <div class="login_container">
         <el-row>
-            <el-col :span='12' :xs='0'></el-col>
-            <el-col :span='12' :xs='24'>
-                <el-form class='login_form' :model='loginForm' :rules='rules' ref='ruleFormRef'>
+            <el-col :span="12" :xs="0"></el-col>
+            <el-col :span="12" :xs="24">
+                <el-form
+                    class="login_form"
+                    :model="loginForm"
+                    :rules="rules"
+                    ref="ruleFormRef"
+                >
                     <h1>Hello</h1>
                     <h2>欢迎来到优选</h2>
-                    <el-form-item prop='username'>
-                        <el-input :prefix-icon='User' v-model='loginForm.username'></el-input>
+                    <el-form-item prop="username">
+                        <el-input
+                            :prefix-icon="User"
+                            v-model="loginForm.username"
+                        ></el-input>
                     </el-form-item>
-                    <el-form-item prop='password'>
-                        <el-input type='password' :prefix-icon='Lock' :show-password='true'
-                                  v-model='loginForm.password'></el-input>
+                    <el-form-item prop="password">
+                        <el-input
+                            type="password"
+                            :prefix-icon="Lock"
+                            :show-password="true"
+                            v-model="loginForm.password"
+                        ></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button :loading='isLoading' class='login_btn' type='primary' size='default'
-                                   @click='login(ruleFormRef)'>
+                        <el-button
+                            :loading="isLoading"
+                            class="login_btn"
+                            type="primary"
+                            size="default"
+                            @click="login(ruleFormRef)"
+                        >
                             Login
                         </el-button>
                     </el-form-item>
@@ -25,7 +42,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import useUserStore from '@/store/modules/user.ts'
@@ -33,7 +50,6 @@ import { ElNotification } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { getTime } from '@/utils/time.ts'
 import type { FormInstance, FormRules } from 'element-plus'
-
 
 const useStore = useUserStore()
 const $router = useRouter()
@@ -50,36 +66,60 @@ const loginForm = reactive<RuleForm>({
     password: '111111',
 })
 
+const validatorUserName = (_: any, value: any, callback: any) => {
+    if (value.length >= 5 && value.length <= 10) {
+        callback()
+    } else {
+        callback(new Error('账号长度应为5-10位'))
+    }
+}
+
+const validatorPassword = (_: any, value: any, callback: any) => {
+    if (value.length >= 6 && value.length <= 15) {
+        callback()
+    } else {
+        callback(new Error('密码长度应为6-15位'))
+    }
+}
+
 const rules = reactive<FormRules<RuleForm>>({
     username: [
-        { required: true, min: 5, max: 10, message: '账号长度应该为5-10位', trigger: 'change' },
+        {
+            validator: validatorUserName,
+            trigger: 'change',
+        },
     ],
     password: [
-        { required: true, min: 6, max: 15, message: '密码长度应该为6-15位', trigger: 'change' },
+        {
+            validator: validatorPassword,
+            trigger: 'change',
+        },
     ],
 })
 
 const login = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     isLoading.value = true
-    await formEl.validate(async (valid, fields) => {
+    await formEl.validate(async (valid) => {
         if (valid) {
-            try {
-                await useStore.userLogin({ ...loginForm })
-                isLoading.value = false
-                ElNotification({
-                    type: 'success',
-                    message: '欢迎回来',
-                    title: `Hello ${getTime()}好`,
+            useStore
+                .userLogin({ ...loginForm })
+                .then(async () => {
+                    isLoading.value = false
+                    ElNotification({
+                        type: 'success',
+                        message: '欢迎回来',
+                        title: `Hello ${getTime()}好`,
+                    })
+                    await $router.push('/')
                 })
-                await $router.push('/')
-            } catch (err) {
-                isLoading.value = false
-                ElNotification({
-                    type: 'error',
-                    message: err.split(':')[1],
+                .catch((err) => {
+                    isLoading.value = false
+                    ElNotification({
+                        type: 'error',
+                        message: (err as Error).message,
+                    })
                 })
-            }
         } else {
             isLoading.value = false
         }
@@ -87,18 +127,18 @@ const login = async (formEl: FormInstance | undefined) => {
 }
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .login_container {
     width: 100%;
     height: 100vh;
-    background: url("@/assets/images/background.jpg") no-repeat;
+    background: url('@/assets/images/background.jpg') no-repeat;
     background-size: cover;
 
     .login_form {
         position: relative;
         width: 80%;
         top: 30vh;
-        background: url("@/assets/images/login_form.png") no-repeat;
+        background: url('@/assets/images/login_form.png') no-repeat;
         background-size: cover;
         padding: 40px;
 
