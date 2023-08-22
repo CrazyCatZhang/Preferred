@@ -3,8 +3,11 @@ import Logo from '@/layout/Logo/index.vue'
 import Menu from '@/layout/Menu/index.vue'
 import useUserStore from '@/store/modules/user.ts'
 import Main from '@/layout/Main/index.vue'
+import Tabbar from '@/layout/Tabbar/index.vue'
+import { useRoute } from 'vue-router'
 
 const userStore = useUserStore()
+const $route = useRoute()
 </script>
 
 <template>
@@ -17,13 +20,16 @@ const userStore = useUserStore()
                     text-color="white"
                     active-text-color="yellowgreen"
                     router
+                    :default-active="$route.path"
                 >
                     <!--根据路由动态生成菜单-->
                     <Menu :menuList="userStore.menuRoutes"></Menu>
                 </el-menu>
             </el-scrollbar>
         </div>
-        <div class="layout_tabbar"></div>
+        <div class="layout_tabbar">
+            <Tabbar></Tabbar>
+        </div>
         <div class="layout_main">
             <Main></Main>
         </div>
