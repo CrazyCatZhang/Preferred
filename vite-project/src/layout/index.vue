@@ -2,6 +2,7 @@
 import Logo from '@/layout/Logo/index.vue'
 import Menu from '@/layout/Menu/index.vue'
 import useUserStore from '@/store/modules/user.ts'
+import Main from '@/layout/Main/index.vue'
 
 const userStore = useUserStore()
 </script>
@@ -15,6 +16,7 @@ const userStore = useUserStore()
                     background-color="#001529"
                     text-color="white"
                     active-text-color="yellowgreen"
+                    router
                 >
                     <!--根据路由动态生成菜单-->
                     <Menu :menuList="userStore.menuRoutes"></Menu>
@@ -22,7 +24,9 @@ const userStore = useUserStore()
             </el-scrollbar>
         </div>
         <div class="layout_tabbar"></div>
-        <div class="layout_main"></div>
+        <div class="layout_main">
+            <Main></Main>
+        </div>
     </div>
 </template>
 
