@@ -14,7 +14,7 @@ const constantRoutes = [
         component: () => import('@/layout/index.vue'),
         name: 'Layout',
         meta: {
-            title: 'Layout',
+            title: '',
             hidden: false,
             icon: '',
         },
