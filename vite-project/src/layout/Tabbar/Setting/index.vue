@@ -1,9 +1,16 @@
-<script setup lang="ts" name='Setting'>
+<script setup lang="ts" name="Setting">
 import { ArrowDown } from '@element-plus/icons-vue'
+import useLayoutSettingStore from '@/store/modules/setting.ts'
+
+const LayoutSettingStore = useLayoutSettingStore()
+
+const refresh = () => {
+    LayoutSettingStore.refresh = !LayoutSettingStore.refresh
+}
 </script>
 
 <template>
-    <el-button size="small" icon="Refresh" circle></el-button>
+    <el-button size="small" icon="Refresh" circle @click="refresh"></el-button>
     <el-button size="small" icon="FullScreen" circle></el-button>
     <el-button size="small" icon="Setting" circle></el-button>
     <img
