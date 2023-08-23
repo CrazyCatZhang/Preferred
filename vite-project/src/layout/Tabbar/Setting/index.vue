@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name='Setting'>
 import { ArrowDown } from '@element-plus/icons-vue'
 </script>
 

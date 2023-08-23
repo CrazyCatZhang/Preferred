@@ -1,18 +1,20 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Layout">
 import Logo from '@/layout/Logo/index.vue'
 import Menu from '@/layout/Menu/index.vue'
 import useUserStore from '@/store/modules/user.ts'
 import Main from '@/layout/Main/index.vue'
 import Tabbar from '@/layout/Tabbar/index.vue'
 import { useRoute } from 'vue-router'
+import useLayoutSettingStore from '@/store/modules/setting.ts'
 
 const userStore = useUserStore()
+const LayoutSettingStore = useLayoutSettingStore()
 const $route = useRoute()
 </script>
 
 <template>
     <div class="layout_container">
-        <div class="layout_slider">
+        <div class="layout_slider" :class='{fold: LayoutSettingStore.fold}'>
             <Logo></Logo>
             <el-scrollbar class="scrollbar">
                 <el-menu
@@ -21,16 +23,18 @@ const $route = useRoute()
                     active-text-color="yellowgreen"
                     router
                     :default-active="$route.path"
+                    :collapse="LayoutSettingStore.fold"
+                    :collapse-transition='false'
                 >
                     <!--根据路由动态生成菜单-->
                     <Menu :menuList="userStore.menuRoutes"></Menu>
                 </el-menu>
             </el-scrollbar>
         </div>
-        <div class="layout_tabbar">
+        <div class="layout_tabbar" :class="{ fold: LayoutSettingStore.fold }">
             <Tabbar></Tabbar>
         </div>
-        <div class="layout_main">
+        <div class="layout_main" :class="{ fold: LayoutSettingStore.fold }">
             <Main></Main>
         </div>
     </div>
@@ -55,6 +59,10 @@ const $route = useRoute()
             .el-menu {
                 border-right: none;
             }
+        }
+
+        &.fold {
+            width: $base-menu-min-width;
         }
     }
 
