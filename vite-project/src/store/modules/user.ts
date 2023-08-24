@@ -1,15 +1,21 @@
 import { defineStore } from 'pinia'
-import { login } from '@/api/user'
-import type { loginForm, loginResponseData } from '@/api/user/type.ts'
+import { login, getUserInfo } from '@/api/user'
+import type {
+    loginForm,
+    loginResponseData,
+    userResponseData,
+} from '@/api/user/type.ts'
 import type { UserState } from '@/store/modules/types/type.ts'
 import { getToken, setToken } from '@/utils/token.ts'
-import {constantRoutes} from '@/router/routes.ts'
+import { constantRoutes } from '@/router/routes.ts'
 
 const useUserStore = defineStore('User', {
     state(): UserState {
         return {
             token: getToken(),
-            menuRoutes: constantRoutes
+            menuRoutes: constantRoutes,
+            username: '',
+            avatar: '',
         }
     },
     actions: {
@@ -23,8 +29,16 @@ const useUserStore = defineStore('User', {
                 return Promise.reject(new Error(result.data.message))
             }
         },
+        async userInfo() {
+            const result: userResponseData = await getUserInfo()
+            if (result.code === 200) {
+                this.username = result.data.checkUser.username
+                this.avatar = result.data.checkUser.avatar
+            }
+        },
     },
     getters: {},
+    persist: true,
 })
 
 export default useUserStore
