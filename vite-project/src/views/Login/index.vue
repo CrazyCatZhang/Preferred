@@ -47,12 +47,13 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import useUserStore from '@/store/modules/user.ts'
 import { ElNotification } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { getTime } from '@/utils/time.ts'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const useStore = useUserStore()
 const $router = useRouter()
+const $route = useRoute()
 const ruleFormRef = ref<FormInstance>()
 const isLoading = ref(false)
 
@@ -111,7 +112,10 @@ const login = async (formEl: FormInstance | undefined) => {
                         message: '欢迎回来',
                         title: `Hello ${getTime()}好`,
                     })
-                    await $router.push('/')
+                    const redirect = $route.query.redirect
+                    await $router.push({
+                        path: (redirect as string) || '/',
+                    })
                 })
                 .catch((err) => {
                     isLoading.value = false

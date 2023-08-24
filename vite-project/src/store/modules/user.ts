@@ -6,7 +6,7 @@ import type {
     userResponseData,
 } from '@/api/user/type.ts'
 import type { UserState } from '@/store/modules/types/type.ts'
-import { getToken, setToken } from '@/utils/token.ts'
+import { getToken, removeToken, setToken } from '@/utils/token.ts'
 import { constantRoutes } from '@/router/routes.ts'
 
 const useUserStore = defineStore('User', {
@@ -36,6 +36,12 @@ const useUserStore = defineStore('User', {
                 this.avatar = result.data.checkUser.avatar
             }
         },
+        userLogout() {
+            this.token = ''
+            this.username = ''
+            this.avatar = ''
+            removeToken()
+        }
     },
     getters: {},
     persist: true,

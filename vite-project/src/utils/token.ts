@@ -6,7 +6,8 @@ const getToken = (): null | string => {
     return localStorage.getItem('TOKEN')
 }
 
-export {
-    setToken,
-    getToken
+const removeToken = () => {
+    localStorage.removeItem('TOKEN')
 }
+
+export { setToken, getToken, removeToken }
