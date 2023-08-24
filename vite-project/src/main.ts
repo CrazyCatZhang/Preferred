@@ -17,5 +17,6 @@ app.use(ElementPlus, {
 })
 app.use(globalComponent)
 app.use(router)
+import '@/permission.ts'
 app.use(pina)
 app.mount('#app')
