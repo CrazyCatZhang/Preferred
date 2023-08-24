@@ -1,11 +1,5 @@
-<script setup lang='ts' name='Screen'>
+<script setup lang="ts" name="Screen"></script>
 
-</script>
+<template></template>
 
-<template>
-
-</template>
-
-<style scoped>
-
-</style>
+<style scoped></style>

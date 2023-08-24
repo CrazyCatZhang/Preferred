@@ -14,7 +14,7 @@ const $route = useRoute()
 
 <template>
     <div class="layout_container">
-        <div class="layout_slider" :class='{fold: LayoutSettingStore.fold}'>
+        <div class="layout_slider" :class="{ fold: LayoutSettingStore.fold }">
             <Logo></Logo>
             <el-scrollbar class="scrollbar">
                 <el-menu
@@ -24,7 +24,7 @@ const $route = useRoute()
                     router
                     :default-active="$route.path"
                     :collapse="LayoutSettingStore.fold"
-                    :collapse-transition='false'
+                    :collapse-transition="false"
                 >
                     <!--根据路由动态生成菜单-->
                     <Menu :menuList="userStore.menuRoutes"></Menu>

@@ -1,4 +1,4 @@
-<script setup lang="ts" name='Tabbar'>
+<script setup lang="ts" name="Tabbar">
 import Breadcrumb from '@/layout/Tabbar/Breadcrumb/index.vue'
 import Setting from '@/layout/Tabbar/Setting/index.vue'
 </script>
