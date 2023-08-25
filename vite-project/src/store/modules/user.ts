@@ -31,9 +31,13 @@ const useUserStore = defineStore('User', {
         },
         async userInfo() {
             const result: userResponseData = await getUserInfo()
+            console.log(result)
             if (result.code === 200) {
                 this.username = result.data.checkUser.username
                 this.avatar = result.data.checkUser.avatar
+                return 'OK'
+            } else {
+                return Promise.reject(new Error(result.data.message))
             }
         },
         userLogout() {
@@ -44,7 +48,6 @@ const useUserStore = defineStore('User', {
         },
     },
     getters: {},
-    persist: true,
 })
 
 export default useUserStore

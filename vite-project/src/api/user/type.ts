@@ -27,6 +27,7 @@ interface userResponseData {
     code: number
     data: {
         checkUser: userInfo
+        message?: string
     }
 }
 
