@@ -64,7 +64,7 @@ interface RuleForm {
 
 const loginForm = reactive<RuleForm>({
     username: 'admin',
-    password: '111111',
+    password: 'atguigu123',
 })
 
 const validatorUserName = (_: any, value: any, callback: any) => {
