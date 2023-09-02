@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getTrademarkData } from '@/api/product/trademark'
+import type {
+    TradeMarkResponseData,
+    Records,
+} from '@/api/product/trademark/type.ts'
 
 let pageNo = ref<number>(1)
 
@@ -8,11 +12,13 @@ let limit = ref<number>(3)
 
 let total = ref<number>(0)
 
-let trademarkArray = ref<any>([])
+let trademarkArray = ref<Records>([])
 
 const getTrademark = async () => {
-    const result: any = await getTrademarkData(pageNo.value, limit.value)
-    console.log(result)
+    const result: TradeMarkResponseData = await getTrademarkData(
+        pageNo.value,
+        limit.value,
+    )
     if (result.code === 200) {
         trademarkArray.value = result.data.records
         total.value = result.data.total
@@ -43,22 +49,34 @@ onMounted(() => {
                 <template #="{ row }">
                     <img
                         v-if="!row.logoUrl.includes('http')"
-                        :src="'http://'+row.logoUrl"
+                        :src="'http://' + row.logoUrl"
                         style="width: 150px; height: 100px"
                         alt="logo"
                     />
                     <img
                         v-else
                         :src="row.logoUrl"
-                        style="width: 100px; height: 100px;background: transparent"
+                        style="
+                            width: 100px;
+                            height: 100px;
+                            background: transparent;
+                        "
                         alt="logo"
                     />
                 </template>
             </el-table-column>
             <el-table-column label="品牌操作" align="center">
-                <template #='{row}'>
-                    <el-button icon='Edit' type='primary' size='small'></el-button>
-                    <el-button icon='Delete' type='danger' size='small'></el-button>
+                <template #="{ row }">
+                    <el-button
+                        icon="Edit"
+                        type="primary"
+                        size="small"
+                    ></el-button>
+                    <el-button
+                        icon="Delete"
+                        type="danger"
+                        size="small"
+                    ></el-button>
                 </template>
             </el-table-column>
         </el-table>
