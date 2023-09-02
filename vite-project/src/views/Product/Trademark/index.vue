@@ -14,7 +14,8 @@ let total = ref<number>(0)
 
 let trademarkArray = ref<Records>([])
 
-const getTrademark = async () => {
+const getTrademark = async (pager = 1) => {
+    pageNo.value = pager
     const result: TradeMarkResponseData = await getTrademarkData(
         pageNo.value,
         limit.value,
@@ -23,6 +24,10 @@ const getTrademark = async () => {
         trademarkArray.value = result.data.records
         total.value = result.data.total
     }
+}
+
+const sizeChange = ()=>{
+   getTrademark()
 }
 
 onMounted(() => {
@@ -81,6 +86,8 @@ onMounted(() => {
             </el-table-column>
         </el-table>
         <el-pagination
+            @current-change='getTrademark'
+            @size-change='sizeChange'
             :pager-count="9"
             v-model:current-page="pageNo"
             v-model:page-size="limit"
