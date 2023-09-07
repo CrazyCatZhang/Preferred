@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { getTrademarkData } from '@/api/product/trademark'
+import {
+    addOrUpdateTrademarkData,
+    getTrademarkData,
+} from '@/api/product/trademark'
 import type {
     TradeMarkResponseData,
     Records,
@@ -47,14 +50,29 @@ const sizeChange = () => {
 
 const addTrademark = () => {
     dialogFormVisible.value = true
+    trademarkParams.logoUrl = ''
+    trademarkParams.tmName = ''
 }
 
 const cancel = () => {
     dialogFormVisible.value = false
 }
 
-const confirm = () => {
+const confirm = async () => {
     dialogFormVisible.value = false
+    const result = await addOrUpdateTrademarkData(trademarkParams)
+    if (result.code === 200) {
+        ElMessage({
+            type: 'success',
+            message: trademarkParams.id ? '修改品牌成功' : '添加品牌成功',
+        })
+        await getTrademark(pageNo.value)
+    } else {
+        ElMessage({
+            type: 'error',
+            message: trademarkParams.id ? '修改品牌失败' : '添加品牌失败',
+        })
+    }
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
@@ -163,7 +181,12 @@ onMounted(() => {
                     :on-success="handleAvatarSuccess"
                     :before-upload="beforeAvatarUpload"
                 >
-                    <img v-if="trademarkParams.logoUrl" :src="trademarkParams.logoUrl" class="avatar" alt='avatar'/>
+                    <img
+                        v-if="trademarkParams.logoUrl"
+                        :src="trademarkParams.logoUrl"
+                        class="avatar"
+                        alt="avatar"
+                    />
                     <el-icon v-else class="avatar-uploader-icon">
                         <Plus />
                     </el-icon>
