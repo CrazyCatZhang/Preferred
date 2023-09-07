@@ -50,6 +50,7 @@ const sizeChange = () => {
 
 const addTrademark = () => {
     dialogFormVisible.value = true
+    delete trademarkParams.id
     trademarkParams.logoUrl = ''
     trademarkParams.tmName = ''
 }
@@ -89,6 +90,11 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
         return false
     }
     return true
+}
+
+const updateTrademarkData = (row: TradeMark) => {
+    dialogFormVisible.value = true
+    Object.assign(trademarkParams, row)
 }
 
 onMounted(() => {
@@ -139,11 +145,12 @@ onMounted(() => {
                 </template>
             </el-table-column>
             <el-table-column label="品牌操作" align="center">
-                <template #="">
+                <template #="{ row }">
                     <el-button
                         icon="Edit"
                         type="primary"
                         size="small"
+                        @click="updateTrademarkData(row)"
                     ></el-button>
                     <el-button
                         icon="Delete"
@@ -165,7 +172,10 @@ onMounted(() => {
             :total="total"
         />
     </el-card>
-    <el-dialog v-model="dialogFormVisible" title="添加品牌">
+    <el-dialog
+        v-model="dialogFormVisible"
+        :title="trademarkParams.id ? '修改品牌' : '添加品牌'"
+    >
         <el-form style="width: 80%">
             <el-form-item label="品牌名称" label-width="100px">
                 <el-input
