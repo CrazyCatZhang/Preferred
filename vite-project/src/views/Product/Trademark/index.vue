@@ -1,21 +1,33 @@
-<script setup lang='ts'>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, reactive } from 'vue'
 import { getTrademarkData } from '@/api/product/trademark'
 import type {
     TradeMarkResponseData,
     Records,
+    TradeMark,
 } from '@/api/product/trademark/type.ts'
 import { Plus } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import type { UploadProps } from 'element-plus'
 
-let pageNo = ref<number>(1)
+const pageNo = ref<number>(1)
 
-let limit = ref<number>(3)
+const limit = ref<number>(3)
 
-let total = ref<number>(0)
+const total = ref<number>(0)
 
-let trademarkArray = ref<Records>([])
+const trademarkArray = ref<Records>([])
 
-let dialogFormVisible = ref<boolean>(false)
+const dialogFormVisible = ref<boolean>(false)
+
+const trademarkParams = reactive<TradeMark>({
+    tmName: '',
+    logoUrl: '',
+})
+
+const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
+    trademarkParams.logoUrl = response.data
+}
 
 const getTrademark = async (pager = 1) => {
     pageNo.value = pager
@@ -37,12 +49,28 @@ const addTrademark = () => {
     dialogFormVisible.value = true
 }
 
-const cancel = ()=>{
+const cancel = () => {
     dialogFormVisible.value = false
 }
 
-const confirm = ()=>{
+const confirm = () => {
     dialogFormVisible.value = false
+}
+
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+    if (
+        rawFile.type !== 'image/jpeg' &&
+        rawFile.type !== 'image/png' &&
+        rawFile.type !== 'image/gif' &&
+        rawFile.type !== 'image/jpg'
+    ) {
+        ElMessage.error('Upload file must be picture!')
+        return false
+    } else if (rawFile.size / 1024 / 1024 > 2) {
+        ElMessage.error('Avatar picture size can not exceed 2MB!')
+        return false
+    }
+    return true
 }
 
 onMounted(() => {
@@ -51,88 +79,104 @@ onMounted(() => {
 </script>
 
 <template>
-    <el-card class='box-card'>
-        <el-button type='primary' size='default' icon='Plus' @click='addTrademark'>添加品牌</el-button>
-        <el-table style='margin: 10px 0' border :data='trademarkArray'>
+    <el-card class="box-card">
+        <el-button
+            type="primary"
+            size="default"
+            icon="Plus"
+            @click="addTrademark"
+        >
+            添加品牌
+        </el-button>
+        <el-table style="margin: 10px 0" border :data="trademarkArray">
             <el-table-column
-                label='序号'
-                width='80px'
-                align='center'
-                type='index'
+                label="序号"
+                width="80px"
+                align="center"
+                type="index"
             ></el-table-column>
             <el-table-column
-                label='品牌名称'
-                align='center'
-                prop='tmName'
+                label="品牌名称"
+                align="center"
+                prop="tmName"
             ></el-table-column>
-            <el-table-column label='品牌LOGO' align='center'>
-                <template #='{ row }'>
+            <el-table-column label="品牌LOGO" align="center">
+                <template #="{ row }">
                     <img
                         v-if="!row.logoUrl.includes('http')"
                         :src="'http://' + row.logoUrl"
-                        style='width: 150px; height: 100px'
-                        alt='logo'
+                        style="width: 150px; height: 100px"
+                        alt="logo"
                     />
                     <img
                         v-else
-                        :src='row.logoUrl'
-                        style='
+                        :src="row.logoUrl"
+                        style="
                             width: 100px;
                             height: 100px;
                             background: transparent;
-                        '
-                        alt='logo'
+                        "
+                        alt="logo"
                     />
                 </template>
             </el-table-column>
-            <el-table-column label='品牌操作' align='center'>
-                <template #=''>
+            <el-table-column label="品牌操作" align="center">
+                <template #="">
                     <el-button
-                        icon='Edit'
-                        type='primary'
-                        size='small'
+                        icon="Edit"
+                        type="primary"
+                        size="small"
                     ></el-button>
                     <el-button
-                        icon='Delete'
-                        type='danger'
-                        size='small'
+                        icon="Delete"
+                        type="danger"
+                        size="small"
                     ></el-button>
                 </template>
             </el-table-column>
         </el-table>
         <el-pagination
-            @current-change='getTrademark'
-            @size-change='sizeChange'
-            :pager-count='9'
-            v-model:current-page='pageNo'
-            v-model:page-size='limit'
-            :page-sizes='[3, 5, 7, 9]'
-            :background='true'
-            layout='prev, pager, next, jumper,->,sizes,total'
-            :total='total'
+            @current-change="getTrademark"
+            @size-change="sizeChange"
+            :pager-count="9"
+            v-model:current-page="pageNo"
+            v-model:page-size="limit"
+            :page-sizes="[3, 5, 7, 9]"
+            :background="true"
+            layout="prev, pager, next, jumper,->,sizes,total"
+            :total="total"
         />
     </el-card>
-    <el-dialog v-model='dialogFormVisible' title='添加品牌'>
-        <el-form style='width: 80%'>
-            <el-form-item label='品牌名称' label-width='100px'>
-                <el-input placeholder='请输入品牌名称'></el-input>
+    <el-dialog v-model="dialogFormVisible" title="添加品牌">
+        <el-form style="width: 80%">
+            <el-form-item label="品牌名称" label-width="100px">
+                <el-input
+                    placeholder="请输入品牌名称"
+                    v-model="trademarkParams.tmName"
+                ></el-input>
             </el-form-item>
-            <el-form-item label='品牌logo' label-width='100px'>
+            <el-form-item label="品牌logo" label-width="100px">
                 <el-upload
-                    class='avatar-uploader'
-                    action='https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15'
-                    :show-file-list='false'
+                    class="avatar-uploader"
+                    action="/api/admin/product/fileUpload"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload"
                 >
-                    <!--                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />-->
-                    <el-icon class='avatar-uploader-icon'>
+                    <img v-if="trademarkParams.logoUrl" :src="trademarkParams.logoUrl" class="avatar" alt='avatar'/>
+                    <el-icon v-else class="avatar-uploader-icon">
                         <Plus />
                     </el-icon>
                 </el-upload>
             </el-form-item>
         </el-form>
         <template #footer>
-            <el-button type="primary" size="default" @click="cancel">取消</el-button>
-            <el-button type="primary" size="default" @click="confirm">确定</el-button>
+            <el-button type="primary" size="default" @click="cancel">
+                取消
+            </el-button>
+            <el-button type="primary" size="default" @click="confirm">
+                确定
+            </el-button>
         </template>
     </el-dialog>
 </template>
