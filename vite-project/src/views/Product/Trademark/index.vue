@@ -23,6 +23,8 @@ const trademarkArray = ref<Records>([])
 
 const dialogFormVisible = ref<boolean>(false)
 
+const formRef = ref()
+
 const trademarkParams = reactive<TradeMark>({
     tmName: '',
     logoUrl: '',
@@ -30,6 +32,7 @@ const trademarkParams = reactive<TradeMark>({
 
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
     trademarkParams.logoUrl = response.data
+    formRef.value.clearValidate('logoUrl')
 }
 
 const getTrademark = async (pager = 1) => {
@@ -51,6 +54,8 @@ const sizeChange = () => {
 const addTrademark = () => {
     dialogFormVisible.value = true
     delete trademarkParams.id
+    delete trademarkParams.createTime
+    delete trademarkParams.updateTime
     trademarkParams.logoUrl = ''
     trademarkParams.tmName = ''
 }
@@ -60,6 +65,7 @@ const cancel = () => {
 }
 
 const confirm = async () => {
+    await formRef.value.validate()
     dialogFormVisible.value = false
     const result = await addOrUpdateTrademarkData(trademarkParams)
     if (result.code === 200) {
@@ -95,6 +101,34 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 const updateTrademarkData = (row: TradeMark) => {
     dialogFormVisible.value = true
     Object.assign(trademarkParams, row)
+}
+
+const validateTmName = (_: any, value: any, callback: any) => {
+    if (value.trim().length >= 2) {
+        callback()
+    } else {
+        //校验未通过返回的错误的提示信息
+        callback(new Error('品牌名称长度至少为两位'))
+    }
+}
+
+const validateLogoUrl = (_: any, value: any, callback: any) => {
+    if (value) {
+        callback()
+    } else {
+        callback(new Error('logo必须上传!!!'))
+    }
+}
+
+const rules = {
+    tmName: [{ required: true, trigger: 'blur', validator: validateTmName }],
+    logoUrl: [
+        { required: true, trigger: 'change', validator: validateLogoUrl },
+    ],
+}
+
+const resetValidateFields = () => {
+    formRef.value.resetFields()
 }
 
 onMounted(() => {
@@ -175,15 +209,21 @@ onMounted(() => {
     <el-dialog
         v-model="dialogFormVisible"
         :title="trademarkParams.id ? '修改品牌' : '添加品牌'"
+        @closed="resetValidateFields"
     >
-        <el-form style="width: 80%">
-            <el-form-item label="品牌名称" label-width="100px">
+        <el-form
+            style="width: 80%"
+            ref="formRef"
+            :model="trademarkParams"
+            :rules="rules"
+        >
+            <el-form-item label="品牌名称" label-width="100px" prop="tmName">
                 <el-input
                     placeholder="请输入品牌名称"
                     v-model="trademarkParams.tmName"
                 ></el-input>
             </el-form-item>
-            <el-form-item label="品牌logo" label-width="100px">
+            <el-form-item label="品牌logo" label-width="100px" prop="logoUrl">
                 <el-upload
                     class="avatar-uploader"
                     action="/api/admin/product/fileUpload"
