@@ -22,3 +22,6 @@ export const addOrUpdateTrademarkData = (data: TradeMark) => {
     }
     return request.post<any, any>(API.ADD_TRADEMARK_URL, data)
 }
+
+export const removeTrademarkDate = (id: number) =>
+    request.delete<any, any>(API.DELETE_TRADEMARK_URL + id)

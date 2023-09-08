@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, markRaw } from 'vue'
 import {
     addOrUpdateTrademarkData,
     getTrademarkData,
+    removeTrademarkDate,
 } from '@/api/product/trademark'
 import type {
     TradeMarkResponseData,
@@ -131,6 +132,22 @@ const resetValidateFields = () => {
     formRef.value.resetFields()
 }
 
+const removeTrademark = async (id: number) => {
+    const result = await removeTrademarkDate(id)
+    if (result.code === 200) {
+        ElMessage({
+            type: 'success',
+            message: '删除品牌成功',
+        })
+        await getTrademark(pageNo.value)
+    } else {
+        ElMessage({
+            type: 'error',
+            message: '删除品牌失败',
+        })
+    }
+}
+
 onMounted(() => {
     getTrademark()
 })
@@ -186,11 +203,21 @@ onMounted(() => {
                         size="small"
                         @click="updateTrademarkData(row)"
                     ></el-button>
-                    <el-button
+
+                    <el-popconfirm
+                        :title="`你确定要删除${row.tmName}吗？`"
+                        width="250px"
                         icon="Delete"
-                        type="danger"
-                        size="small"
-                    ></el-button>
+                        @confirm="removeTrademark(row.id)"
+                    >
+                        <template #reference>
+                            <el-button
+                                icon="Delete"
+                                type="danger"
+                                size="small"
+                            ></el-button>
+                        </template>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
