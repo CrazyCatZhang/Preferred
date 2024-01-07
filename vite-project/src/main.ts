@@ -20,6 +20,3 @@ app.use(globalComponent)
 app.use(router)
 app.use(pina)
 app.mount('#app')
-
-
-# Test Git
